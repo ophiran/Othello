@@ -4,6 +4,7 @@
  */
 package session;
 
+import javax.ejb.Remote;
 import javax.ejb.Stateless;
 
 /**
@@ -11,6 +12,7 @@ import javax.ejb.Stateless;
  * @author Ophiran
  */
 @Stateless
+@Remote(OthelloAuthRemote.class)
 public class OthelloAuth implements OthelloAuthRemote {
 
     @Override

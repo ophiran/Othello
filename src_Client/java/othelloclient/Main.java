@@ -4,11 +4,18 @@
  */
 package othelloclient;
 
+import javax.ejb.EJB;
+import session.OthelloAuthRemote;
 /**
  *
  * @author Ophiran
  */
 public class Main {
+    
+    @EJB
+    public static OthelloAuthRemote othelloAuth;
+    
+    public static OthelloMainWindow mainWindow;
 
     
     /**
@@ -16,5 +23,11 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        othelloAuth.createGame();
+        
+        mainWindow = new OthelloMainWindow();
+        mainWindow.setVisible(true);
+       
+        
     }
 }
