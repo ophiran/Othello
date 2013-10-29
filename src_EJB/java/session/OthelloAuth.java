@@ -5,25 +5,29 @@
 package session;
 
 import javax.ejb.Stateless;
-import javax.ejb.LocalBean;
 
 /**
  *
  * @author Ophiran
  */
 @Stateless
-@LocalBean
-public class OthelloAuth {
+public class OthelloAuth implements OthelloAuthRemote {
 
+    @Override
     public boolean createGame() {
         return false;
     }
-    
+
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
+
+    @Override
     public boolean joinGame() {
         return false;
     }
 
-    public void getListGames() {
+    @Override
+    public void getListGame() {
     }
 
 }
