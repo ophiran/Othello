@@ -27,5 +27,6 @@ public class OthelloMDB implements MessageListener {
     
     @Override
     public void onMessage(Message message) {
+        
     }
 }
