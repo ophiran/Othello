@@ -4,13 +4,9 @@
  */
 package othelloclient;
 
-import java.awt.BorderLayout;
 import java.awt.Image;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -20,6 +16,11 @@ import javax.swing.JPanel;
  */
 public class OthelloMainWindow extends javax.swing.JFrame {
 
+    private MenuPanel menuPanel;
+    private GameBoard gameBoard;
+    private ChatPanel chatPanel;
+    private JPanel mainPanel;
+    
     private Image tmpPic = null;
     private JLabel image;
     /**
@@ -27,6 +28,7 @@ public class OthelloMainWindow extends javax.swing.JFrame {
      */
     public OthelloMainWindow(){
         initComponents();
+        /*
         try {
             tmpPic = ImageIO.read(this.getClass().getResourceAsStream("/ressources/board.jpg"));
             image = new JLabel(new ImageIcon(tmpPic));
@@ -36,7 +38,55 @@ public class OthelloMainWindow extends javax.swing.JFrame {
         
         jPanelBoard.setLayout(new BorderLayout());
         jPanelBoard.add(image);
-        jPanelBoard.repaint();
+        jPanelBoard.repaint();*/
+        
+        menuPanel = new MenuPanel();
+        menuPanel.setVisible(true);
+        gameBoard = new GameBoard();
+        gameBoard.setVisible(true);
+        chatPanel = new ChatPanel();
+        chatPanel.setVisible(true);
+        mainPanel = new JPanel();
+        mainPanel.setVisible(true);
+        
+        
+        GroupLayout layout = new GroupLayout(this.getContentPane());
+        GroupLayout layoutMainPanel = new GroupLayout(mainPanel);
+        
+        //Layout for MainPanel
+        mainPanel.setLayout(layoutMainPanel);
+        layoutMainPanel.setAutoCreateGaps(true);
+        layoutMainPanel.setAutoCreateContainerGaps(true);
+        
+        GroupLayout.SequentialGroup hGroupMP = layoutMainPanel.createSequentialGroup();
+        hGroupMP.addGroup(layoutMainPanel.createParallelGroup().addComponent(menuPanel));
+        hGroupMP.addGroup(layoutMainPanel.createParallelGroup().addComponent(gameBoard));
+        layoutMainPanel.setHorizontalGroup(hGroupMP);
+        
+        GroupLayout.SequentialGroup vGroupMP = layoutMainPanel.createSequentialGroup();
+        vGroupMP.addGroup(layoutMainPanel.createParallelGroup(Alignment.BASELINE).addComponent(menuPanel).addComponent(gameBoard));
+        layoutMainPanel.setVerticalGroup(vGroupMP);
+        
+        //Layout for JFrame
+        this.getContentPane().setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        
+        //Create horizontal group (JFrame)
+        GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
+        hGroup.addGroup(layout.createParallelGroup().addComponent(mainPanel).addComponent(chatPanel));
+        layout.setHorizontalGroup(hGroup);
+        
+        //Create vertical group (JFrame)
+        GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
+        vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(mainPanel));
+        vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(chatPanel));
+        layout.setVerticalGroup(vGroup);
+        
+        
+        //this.getContentPane().add(menuPanel);
+        pack();
+        this.repaint();
         
     }
 
@@ -49,23 +99,11 @@ public class OthelloMainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanelBoard = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        javax.swing.GroupLayout jPanelBoardLayout = new javax.swing.GroupLayout(jPanelBoard);
-        jPanelBoard.setLayout(jPanelBoardLayout);
-        jPanelBoardLayout.setHorizontalGroup(
-            jPanelBoardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 800, Short.MAX_VALUE)
-        );
-        jPanelBoardLayout.setVerticalGroup(
-            jPanelBoardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 579, Short.MAX_VALUE)
-        );
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -79,11 +117,11 @@ public class OthelloMainWindow extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelBoard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 803, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelBoard, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 579, Short.MAX_VALUE)
         );
 
         pack();
@@ -97,6 +135,5 @@ public class OthelloMainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JPanel jPanelBoard;
     // End of variables declaration//GEN-END:variables
 }
