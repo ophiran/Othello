@@ -28,6 +28,5 @@ public class Main {
         mainWindow = new OthelloMainWindow();
         mainWindow.setVisible(true);
        
-        
     }
 }

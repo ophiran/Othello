@@ -4,12 +4,15 @@
  */
 package othelloclient;
 
+import java.awt.BorderLayout;
 import java.awt.Image;
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  *
@@ -17,19 +20,24 @@ import javax.imageio.ImageIO;
  */
 public class OthelloMainWindow extends javax.swing.JFrame {
 
-    private Image boardPic;
+    private Image tmpPic = null;
+    private JLabel image;
     /**
      * Creates new form OthelloMainWindow
      */
     public OthelloMainWindow(){
         initComponents();
         try {
-            boardPic = ImageIO.read(new File(""));
+            tmpPic = ImageIO.read(this.getClass().getResourceAsStream("/ressources/board.jpg"));
+            image = new JLabel(new ImageIcon(tmpPic));
         } catch (IOException ex) {
             Logger.getLogger(OthelloMainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        jPanelBoard.prepareImage(null, rootPane);
+        jPanelBoard.setLayout(new BorderLayout());
+        jPanelBoard.add(image);
+        jPanelBoard.repaint();
+        
     }
 
     /**
