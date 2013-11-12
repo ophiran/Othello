@@ -4,6 +4,7 @@
  */
 package session;
 
+import java.util.Collection;
 import javax.ejb.Remote;
 
 /**
@@ -13,10 +14,11 @@ import javax.ejb.Remote;
 @Remote
 public interface OthelloAuthRemote {
 
-    boolean createGame();
+    Long createGame(String nickname,String gameName,String password);
 
-    boolean joinGame();
+    Long joinGame(String nickname,Long gameId,String password);
 
-    void getListGame();
+    Collection<GameListInfo> getListGame();
     
+    boolean createUser(String nickname,String password);
 }

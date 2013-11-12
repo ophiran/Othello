@@ -29,7 +29,7 @@ public class GameBoard extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
 
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
-        setPreferredSize(new java.awt.Dimension(550, 600));
+        setPreferredSize(new java.awt.Dimension(500, 500));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ressources/board.jpg"))); // NOI18N
 
@@ -41,7 +41,7 @@ public class GameBoard extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel1)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
