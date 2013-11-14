@@ -20,5 +20,9 @@ public interface OthelloAuthRemote {
 
     Collection<GameListInfo> getListGame();
     
+    Collection<GameListInfo> getListGame(GameStatesEnum state);
+    
     boolean createUser(String nickname,String password);
+    
+    boolean connectUser(String nickname,String password);
 }

@@ -26,17 +26,28 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+              <Component id="jLabelName" min="-2" pref="98" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jTextFieldNickname" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jButtonList" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jButtonCreate" alignment="0" pref="123" max="32767" attributes="0"/>
-                  <Component id="jButtonJoin" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jButtonQuit" max="32767" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="jButtonList" alignment="0" max="32767" attributes="0"/>
+                          <Component id="jButtonCreate" alignment="0" pref="123" max="32767" attributes="0"/>
+                          <Component id="jButtonJoin" alignment="0" max="32767" attributes="0"/>
+                          <Component id="jButtonQuit" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="jLabel1" min="-2" pref="123" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -46,16 +57,16 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jTextFieldNickname" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="jLabelName" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
               <Component id="jButtonJoin" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jButtonCreate" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jButtonList" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="jButtonQuit" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="302" max="32767" attributes="0"/>
+              <EmptySpace pref="321" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -67,7 +78,7 @@
           <Font name="Tahoma" size="11" style="1"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="text" type="java.lang.String" value="Player Nickname"/>
+        <Property name="text" type="java.lang.String" value="Welcome"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="jButtonJoin">
@@ -94,8 +105,6 @@
         <Property name="text" type="java.lang.String" value="List Game"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="jTextFieldNickname">
-    </Component>
     <Component class="javax.swing.JButton" name="jButtonQuit">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -103,6 +112,8 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Quit"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelName">
     </Component>
   </SubComponents>
 </Form>

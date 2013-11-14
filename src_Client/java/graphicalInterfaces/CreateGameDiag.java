@@ -4,11 +4,12 @@
  * and open the template in the editor.
  */
 
-package othelloclient;
+package graphicalInterfaces;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
+import othelloclient.Main;
+import othelloclient.OthelloMainWindow;
 
 /**
  *

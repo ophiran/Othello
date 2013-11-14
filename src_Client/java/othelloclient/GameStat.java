@@ -14,5 +14,6 @@ public enum GameStat {
     PLAYER1,
     PLAYER2,
     SPECTATOR,
-    OUTSIDE;
+    NOTCONNECTED,
+    CONNECTED;
 }

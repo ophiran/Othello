@@ -4,13 +4,17 @@
  */
 package othelloclient;
 
-import java.awt.Image;
+import graphicalInterfaces.GameListPanel;
+import graphicalInterfaces.ChatPanel;
+import graphicalInterfaces.MenuPanel;
+import graphicalInterfaces.CreateGameDiag;
+import graphicalInterfaces.CreateUserPanel;
+import graphicalInterfaces.GameBoard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import session.GameListInfo;
 
@@ -28,10 +32,11 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
     private GameListPanel gameListPanel = new GameListPanel();
     private GroupLayout layout;
     private GroupLayout layoutMainPanel;
+    private CreateUserPanel userPanel = new CreateUserPanel();
     
     //Game infos
     public Long gameId;
-    public GameStat currentStatus;
+    public GameStat currentStatus = GameStat.NOTCONNECTED; //Might be useless
     
     //GameList
     public Collection<GameListInfo> gameList;
@@ -53,7 +58,7 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
         jPanelBoard.setLayout(new BorderLayout());
         jPanelBoard.add(image);
         jPanelBoard.repaint();*/
-        switchGamePanel();
+        switchMenuPanel();
         
     }
 
@@ -111,6 +116,8 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
     private void switchGamePanel(){
         if(gameBoard.isVisible()) {
             gameList = Main.othelloAuth.getListGame();
+            System.out.println("Size of list: " + gameList.size());
+            gameListPanel.setList(gameList);
             gameBoard.setVisible(false);
             layoutMainPanel.replace(gameBoard, gameListPanel);
             gameListPanel.setVisible(true);
@@ -126,7 +133,27 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
         pack();
         repaint();
     }
+    
+    private void switchMenuPanel(){
+        if(menuPanel.isVisible()){
+            menuPanel.setVisible(false);
+            layoutMainPanel.replace(menuPanel,userPanel);
+            userPanel.setVisible(true);
+        }
+        else {
+            userPanel.setVisible(false);
+            layoutMainPanel.replace(userPanel, menuPanel);
+            menuPanel.setVisible(true);
+        }
+        pack();
+        repaint();
+    }
     private void initListeners(){
+        //Create user panel listeners
+        userPanel.getCreateButton().addActionListener(this);
+        userPanel.getConnectButton().addActionListener(this);
+        
+        
         //Menu panel listeners
         menuPanel.getListButton().addActionListener(this);
         menuPanel.getCreateButton().addActionListener(this);
@@ -140,6 +167,30 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(e.getSource().equals(userPanel.getCreateButton())){
+            boolean createUser;
+            createUser = Main.othelloAuth.createUser(userPanel.getUsername(), userPanel.getPassword());
+            if(createUser) {
+                menuPanel.getNickNameField().setText(userPanel.getUsername());
+                this.currentStatus = GameStat.CONNECTED;
+                switchMenuPanel();
+            }
+            else {
+                //show error to the user
+            }
+        }
+        if(e.getSource().equals(userPanel.getConnectButton())){
+            boolean connectedUser;
+            connectedUser = Main.othelloAuth.connectUser(userPanel.getUsername(), userPanel.getPassword());
+            if(connectedUser) {
+                menuPanel.getNickNameField().setText(userPanel.getUsername());
+                this.currentStatus = GameStat.CONNECTED;
+                switchMenuPanel();
+            }
+            else {
+                //show error to the user
+            }
+        }
         if(e.getSource().equals(menuPanel.getQuitButton())){
             this.dispose();
         }
