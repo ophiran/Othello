@@ -103,6 +103,7 @@ public class OthelloAuth implements OthelloAuthRemote {
             TextMessage tm = session.createTextMessage();
             tm.setLongProperty("GameId", gameIdGen);
             tm.setStringProperty("Type", "Create");
+            tm.setLongProperty("Player", player.getId());
             session.createProducer(topic).send(tm);
         } catch (JMSException ex) {
             Logger.getLogger(OthelloAuth.class.getName()).log(Level.SEVERE, null, ex);
@@ -131,8 +132,21 @@ public class OthelloAuth implements OthelloAuthRemote {
             else {
                 return null;
             }
+            
+            Connection connection;
+            try {
+                connection = connectionFactory.createConnection();
+                Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+                TextMessage tm = session.createTextMessage();
+                tm.setLongProperty("GameId", gameIdGen);
+                tm.setStringProperty("Type", "Join");
+                tm.setLongProperty("Player", player.getId());
+                session.createProducer(topic).send(tm);
+            } catch (JMSException ex) {
+                Logger.getLogger(OthelloAuth.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            em.persist(game);
         }
-        em.persist(game);
         System.out.println("Returniong game id: " + game.getId());
         return game.getId();
     }
