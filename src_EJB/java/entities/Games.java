@@ -1,7 +1,9 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package entities;
 
 import java.io.Serializable;
@@ -30,7 +32,7 @@ import session.GameListInfo;
 
 /**
  *
- * @author Ophiran
+ * @author ophiran
  */
 @Entity
 @Table(name = "games")
@@ -42,7 +44,8 @@ import session.GameListInfo;
     @NamedQuery(name = "Games.findByStartDate", query = "SELECT g FROM Games g WHERE g.startDate = :startDate"),
     @NamedQuery(name = "Games.findByEndDate", query = "SELECT g FROM Games g WHERE g.endDate = :endDate"),
     @NamedQuery(name = "Games.findByPassword", query = "SELECT g FROM Games g WHERE g.password = :password"),
-    @NamedQuery(name = "Games.findByState", query = "SELECT g FROM Games g WHERE g.state = :state")})
+    @NamedQuery(name = "Games.findByState", query = "SELECT g FROM Games g WHERE g.state = :state"),
+    @NamedQuery(name = "Games.findByUnique", query = "SELECT g FROM Games g WHERE g.gameName = :gameName AND g.startDate = :startDate")})
 public class Games implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

@@ -41,6 +41,10 @@ public class GameListPanel extends javax.swing.JPanel implements ActionListener{
     public void setList(Collection<GameListInfo> gameList){
         jList1.setListData(gameList.toArray());
     }
+    
+    public JList getList(){
+        return jList1;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {

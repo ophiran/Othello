@@ -4,19 +4,54 @@
  */
 package graphicalInterfaces;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 /**
  *
  * @author Ophiran
  */
 public class GameBoard extends javax.swing.JPanel {
 
+    private JLabel[][] boardPieces; 
+    private ImageIcon whitePiece;
+    private ImageIcon blackPiece;
+    
     /**
      * Creates new form GameBoard
      */
     public GameBoard() {
         initComponents();
+        initBoard();
+        /*
+        try {
+            tmpPic = ImageIO.read(this.getClass().getResourceAsStream("/ressources/board.jpg"));
+            image = new JLabel(new ImageIcon(tmpPic));
+        } catch (IOException ex) {
+            Logger.getLogger(OthelloMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        jPanelBoard.setLayout(new BorderLayout());
+        jPanelBoard.add(image);
+        jPanelBoard.repaint();*/
     }
-
+    
+    public final void initBoard(){
+        float xSize = jLabel1.getIcon().getIconWidth()/8;
+        float ySize = jLabel1.getIcon().getIconHeight()/8;
+        System.out.println("The board steps are : " + xSize + " by " + ySize);
+        boardPieces = new JLabel[8][8];
+        for(int yCoord = 0; yCoord < 8; yCoord++){
+            for(int xCoord = 0; xCoord <8; xCoord++){
+                boardPieces[xCoord][yCoord].setLocation((int)(xSize * xCoord + xSize),(int)(ySize * yCoord + ySize) );
+                boardPieces[xCoord][yCoord].setVisible(true);
+            }
+        }
+    }
+    
+    public void placePiece(int boardX, int boardY){
+        //62.5*X + 62.5/2
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

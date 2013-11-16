@@ -5,9 +5,8 @@
 package session;
 
 import java.util.HashMap;
+import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -18,17 +17,20 @@ public class OthelloGameGest implements OthelloGameGestLocal {
 
     private HashMap<Long,OthelloGrid> games = new HashMap<>();
     
-    @PersistenceContext(unitName = "OthelloEAR-ejbPU")
-    private EntityManager em;
     
-    @Override
-    public void createGrid(Long gameId) {
-        OthelloGrid newGrid = new OthelloGrid();
-        //newGrid.grid[]
-        
-    }
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+    
+
+    @Override
+    public OthelloGrid getGrid(Long gameId) {
+        return games.get(gameId);
+    }
+
+    @Override
+    public void addGrid(Long gameId,OthelloGrid grid) {
+        games.put(gameId, grid);
+    }
 
 }

@@ -13,6 +13,6 @@ import javax.ejb.Local;
 @Local
 public interface OthelloGameGestLocal {
 
-    void createGrid(Long gameId);
-    
+    OthelloGrid getGrid(Long gameId);
+    void addGrid(Long gameId,OthelloGrid grid);
 }

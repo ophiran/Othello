@@ -4,13 +4,15 @@
  */
 package session;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Ophiran
  */
-public class OthelloGrid {
-    public Long player1;
-    public Long player2;
-    public Long lastPlayeer;
+public class OthelloGrid implements Serializable{
+    public String player1;
+    public String player2;
+    public String playerTurn;
     public int[][] grid = new int[8][8];
 }

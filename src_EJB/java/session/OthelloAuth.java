@@ -18,6 +18,7 @@ import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Remote;
 import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -32,14 +33,11 @@ import javax.persistence.Query;
  *
  * @author Ophiran
  */
-@Singleton
+@Stateless
 @Remote(OthelloAuthRemote.class)
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
+//@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class OthelloAuth implements OthelloAuthRemote {
 
-    private Vector<Games> games;
-    
-    private Long gameIdGen = 0L;
     
     @PersistenceContext(unitName = "OthelloEAR-ejbPU")
     private EntityManager em;
@@ -73,7 +71,7 @@ public class OthelloAuth implements OthelloAuthRemote {
     
     //Have to pay attention to not have two players with the same names (with the concurrency managment + synchronized)
     @Override
-    public synchronized Long createGame(String nickname, String gameName, String password) {
+    public Long createGame(String nickname, String gameName, String password) {
         Players player;
         Query query = em.createNamedQuery("Players.findByNickname").setParameter("nickname", nickname);
         if(query.getResultList().isEmpty()){
@@ -86,16 +84,18 @@ public class OthelloAuth implements OthelloAuthRemote {
         }
         
         Date startDate = new Date(System.currentTimeMillis());
-        gameIdGen++;
-        Games game = new Games(gameIdGen,gameName);
+        Games game = new Games();
+        game.setGameName(gameName);
         query = em.createNamedQuery("Gamestate.findByName").setParameter("name", GameStatesEnum.OPEN.getName());
         game.setStartDate(startDate);
         game.setPassword(password);
         game.setPlayer1(player);
         game.setState((Gamestate)query.getSingleResult());
         em.persist(game);
-        System.out.println("Returning game id: " + gameIdGen);
         
+        query = em.createNamedQuery("Games.findByUnique").setParameter("gameName", game.getGameName()).setParameter("startDate", game.getStartDate());
+        Long gameIdGen = ((Games)query.getSingleResult()).getId();
+        System.out.println("Returning game id: " + gameIdGen);
         Connection connection;
         try {
             connection = connectionFactory.createConnection();
@@ -112,7 +112,7 @@ public class OthelloAuth implements OthelloAuthRemote {
     }
 
     @Override
-    public synchronized Long joinGame(String nickname, Long gameId, String password) {
+    public Long joinGame(String nickname, Long gameId, String password) {
         Query query = em.createNamedQuery("Games.findById").setParameter("id", gameId);
         Games game = (Games)query.getSingleResult();
         
@@ -138,7 +138,7 @@ public class OthelloAuth implements OthelloAuthRemote {
                 connection = connectionFactory.createConnection();
                 Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
                 TextMessage tm = session.createTextMessage();
-                tm.setLongProperty("GameId", gameIdGen);
+                tm.setLongProperty("GameId", game.getId());
                 tm.setStringProperty("Type", "Join");
                 tm.setLongProperty("Player", player.getId());
                 session.createProducer(topic).send(tm);

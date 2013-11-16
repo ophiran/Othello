@@ -10,6 +10,7 @@ import graphicalInterfaces.MenuPanel;
 import graphicalInterfaces.CreateGameDiag;
 import graphicalInterfaces.CreateUserPanel;
 import graphicalInterfaces.GameBoard;
+import graphicalInterfaces.joinGameDiag;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -37,6 +38,7 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
     //Game infos
     public Long gameId;
     public GameStat currentStatus = GameStat.NOTCONNECTED; //Might be useless
+    public String gamePassword = "";
     
     //GameList
     public Collection<GameListInfo> gameList;
@@ -47,17 +49,6 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
         initComponents();
         initLayout();
         initListeners();
-        /*
-        try {
-            tmpPic = ImageIO.read(this.getClass().getResourceAsStream("/ressources/board.jpg"));
-            image = new JLabel(new ImageIcon(tmpPic));
-        } catch (IOException ex) {
-            Logger.getLogger(OthelloMainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        jPanelBoard.setLayout(new BorderLayout());
-        jPanelBoard.add(image);
-        jPanelBoard.repaint();*/
         switchMenuPanel();
         
     }
@@ -200,6 +191,13 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
         }
         if(e.getSource().equals(menuPanel.getCreateButton())){
             new CreateGameDiag(this, rootPaneCheckingEnabled).setVisible(true);
+        }
+        if(e.getSource().equals(menuPanel.getJoinButton())){
+            GameListInfo info = (GameListInfo)gameListPanel.getList().getSelectedValue();
+            if(info != null && (!info.player1.isEmpty() || !info.player2.isEmpty())){
+                new joinGameDiag(this, rootPaneCheckingEnabled).setVisible(true);
+                gameId = Main.othelloAuth.joinGame(menuPanel.getNickNameField().getText(), info.gameId, gamePassword);
+            }
         }
     }
     
