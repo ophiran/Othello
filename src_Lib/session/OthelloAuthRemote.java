@@ -25,4 +25,6 @@ public interface OthelloAuthRemote {
     boolean createUser(String nickname,String password);
     
     boolean connectUser(String nickname,String password);
+    
+    void refreshGrid(Long gameId);
 }

@@ -14,14 +14,14 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.EJB;
 import javax.ejb.Remote;
-import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
@@ -46,6 +46,9 @@ public class OthelloAuth implements OthelloAuthRemote {
     private ConnectionFactory connectionFactory;
     @Resource(lookup = "jms/javaee6/Topic")
     private Topic topic;
+    
+    @EJB
+    private OthelloGameGestLocal gameList;
     
     @Override
     public Collection<GameListInfo> getListGame() {
@@ -171,6 +174,25 @@ public class OthelloAuth implements OthelloAuthRemote {
         Query query = em.createNamedQuery("Players.findByAuthentication").setParameter("nickname", nickname).setParameter("password", password);
         if(query.getResultList().isEmpty()) return false;
         return true;
+    }
+
+    @Override
+    public void refreshGrid(Long gameId){
+        
+        Connection connection;
+        try {
+            connection = connectionFactory.createConnection();
+            Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+            MessageProducer mp = session.createProducer(topic);
+            ObjectMessage om = session.createObjectMessage();
+            om.setLongProperty("GameId", gameId);
+            om.setStringProperty("Type", "Grid");
+            om.setObject(gameList.getGrid(gameId));
+            mp.send(om);
+            session.close();
+        } catch (JMSException ex) {
+            Logger.getLogger(OthelloAuth.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     

@@ -4,6 +4,13 @@
  */
 package graphicalInterfaces;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -13,44 +20,76 @@ import javax.swing.JLabel;
  */
 public class GameBoard extends javax.swing.JPanel {
 
-    private JLabel[][] boardPieces; 
-    private ImageIcon whitePiece;
-    private ImageIcon blackPiece;
+    public final int WHITE_PIECE = 1;
+    public final int BLACK_PIECE = 2;
+    
+    private BufferedImage whitePiece;
+    private BufferedImage blackPiece;
+    private BufferedImage boardComplete;
+    private BufferedImage board;
     
     /**
      * Creates new form GameBoard
      */
     public GameBoard() {
         initComponents();
+        loadImages();
+        jLabel1.setIcon(new ImageIcon(boardComplete));
         initBoard();
-        /*
-        try {
-            tmpPic = ImageIO.read(this.getClass().getResourceAsStream("/ressources/board.jpg"));
-            image = new JLabel(new ImageIcon(tmpPic));
-        } catch (IOException ex) {
-            Logger.getLogger(OthelloMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+    //Method using pixels positions
+    private BufferedImage addImage(BufferedImage img1,BufferedImage img2,int posX,int posY){
+        Graphics2D g2d = img1.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g2d.drawImage(img2, posX, posY, null);
+        return img1;
+    }
+    
+    public JLabel getBoard(){
+        return jLabel1;
+    }
+    
+    private final void loadImages(){
+        try{
+            boardComplete = ImageIO.read(this.getClass().getResourceAsStream("/ressources/board.jpg"));
+            board = ImageIO.read(this.getClass().getResourceAsStream("/ressources/board.jpg"));
+            whitePiece = ImageIO.read(this.getClass().getResourceAsStream("/ressources/whitePiece.png"));
+            blackPiece = ImageIO.read(this.getClass().getResourceAsStream("/ressources/blackPiece.png"));
+        } catch(IOException ex){
+            Logger.getLogger(GameBoard.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        jPanelBoard.setLayout(new BorderLayout());
-        jPanelBoard.add(image);
-        jPanelBoard.repaint();*/
     }
     
     public final void initBoard(){
-        float xSize = jLabel1.getIcon().getIconWidth()/8;
-        float ySize = jLabel1.getIcon().getIconHeight()/8;
-        System.out.println("The board steps are : " + xSize + " by " + ySize);
-        boardPieces = new JLabel[8][8];
-        for(int yCoord = 0; yCoord < 8; yCoord++){
-            for(int xCoord = 0; xCoord <8; xCoord++){
-                boardPieces[xCoord][yCoord].setLocation((int)(xSize * xCoord + xSize),(int)(ySize * yCoord + ySize) );
-                boardPieces[xCoord][yCoord].setVisible(true);
-            }
-        }
+        boardComplete.setData(board.getData());
     }
     
-    public void placePiece(int boardX, int boardY){
-        //62.5*X + 62.5/2
+    public int getBoardX(int pixelX){
+        float caseWidth = board.getWidth()/8;
+        return (int)(pixelX/caseWidth);
+    }
+    
+    public int getBoardY(int pixelY){
+        float caseHeight = board.getHeight()/8;
+        return (int)(pixelY/caseHeight);
+    }
+    
+    //Use board positioning
+    public void placePiece(int boardX, int boardY,int pieceType){
+        int caseWidth = board.getWidth()/8;
+        int caseHeight = board.getHeight()/8;
+        int pieceWidth = whitePiece.getWidth();
+        int pieceHeight = whitePiece.getHeight();
+        int offSetX = (caseWidth - pieceWidth) / 2 + 2;
+        int offSetY = (caseHeight - pieceHeight) /2 + 3;
+        if(pieceType == WHITE_PIECE){
+            boardComplete = addImage(boardComplete, whitePiece, caseWidth*boardX+offSetX, caseHeight*boardY+offSetY);
+        }
+        else if (pieceType == BLACK_PIECE){
+            boardComplete = addImage(boardComplete, blackPiece, caseWidth*boardX+offSetX, caseHeight*boardY+offSetY);
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -64,19 +103,24 @@ public class GameBoard extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
 
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+        setMaximumSize(new java.awt.Dimension(500, 500));
         setPreferredSize(new java.awt.Dimension(500, 500));
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ressources/board.jpg"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables

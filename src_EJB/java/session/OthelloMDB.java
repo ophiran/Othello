@@ -88,6 +88,9 @@ public class OthelloMDB implements MessageListener {
                 case "Join":
                     joinGame(message);
                     break;
+                case "Movement":
+                    playMove(message);
+                    break;
             }
             
         } catch (JMSException ex) {
@@ -115,6 +118,9 @@ public class OthelloMDB implements MessageListener {
         grid.grid[4][4] = 1;
         grid.grid[4][3] = 2;
         
+        grid.player1Score = 2;
+        grid.player2Score = 2;
+        
         othelloLoc.addGrid(gameId, grid);
     }
     
@@ -137,6 +143,11 @@ public class OthelloMDB implements MessageListener {
             grid.playerTurn = grid.player2;
         }
         
+        sendGrid(gameId, grid);
+        //publish the grid
+    }
+    
+    private void sendGrid(Long gameId,OthelloGrid grid) throws JMSException{
         Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
         MessageProducer mp = session.createProducer(othelloTopic);
         ObjectMessage om = session.createObjectMessage();
@@ -145,7 +156,222 @@ public class OthelloMDB implements MessageListener {
         om.setObject(grid);
         mp.send(om);
         session.close();
-        //publish the grid
+    }
+    
+    private void playMove(Message message) throws JMSException {
+        Long gameId = message.getLongProperty("GameId");
+        String playerTurn = message.getStringProperty("Player");
+        int xCoord = message.getIntProperty("X");
+        int yCoord = message.getIntProperty("Y");
+        OthelloGrid grid = othelloLoc.getGrid(gameId);
+        boolean isValid = false; //verify if the placement was valid
+        int playerColor;
+        
+        if(grid.playerTurn.equals(playerTurn)){
+            if(grid.player1.equals(playerTurn)){
+                playerColor = 1;
+            }
+            else {
+                playerColor = 2;
+            }
+            
+            if(checkLine(xCoord, yCoord, -1, -1, playerColor, grid, true)){
+                isValid = true;
+            }
+            if(checkLine(xCoord, yCoord, -1, 0, playerColor, grid, true)){
+                isValid = true;
+            }
+            if(checkLine(xCoord, yCoord, -1, 1, playerColor, grid, true)){
+                isValid = true;
+            }
+            if(checkLine(xCoord, yCoord, 0, -1, playerColor, grid, true)){
+                isValid = true;
+            }
+            if(checkLine(xCoord, yCoord, 0, 1, playerColor, grid, true)){
+                isValid = true;
+            }
+            if(checkLine(xCoord, yCoord, 1, -1, playerColor, grid, true)){
+                isValid = true;
+            }
+            if(checkLine(xCoord, yCoord, 1, 0, playerColor, grid, true)){
+                isValid = true;
+            }
+            if(checkLine(xCoord, yCoord, 1, 1, playerColor, grid, true)){
+                isValid = true;
+            }
+            
+            if(isValid){
+                System.out.println("Putting a " + playerColor + " at position (" + xCoord +"," + yCoord + ")");
+                grid.grid[xCoord][yCoord] = playerColor;
+                if(playerTurn.equals(grid.player1) && hasValidPlacement(grid, 1)){
+                    grid.playerTurn = grid.player2;
+                }
+                else {
+                    grid.playerTurn = grid.player1;
+                }
+            }
+            sendGrid(gameId, grid);
+        }
+        
+    }
+    
+    
+    /*
+    direction   (incX,incY) = { (-1,-1);(0,-1);(1,-1)
+                                (-1,0);(*,*);(1,0)
+                                (-1,1);(0,1);(1,1)
+    */
+    private boolean checkLine(int xCoord,int yCoord,int incX,int incY,int playerColor,OthelloGrid grid,boolean flip){
+        boolean isValid = false;
+        boolean stopped = false;
+        boolean found = false;
+        int n = 1;
+        
+        if((xCoord+incX)<8 && (xCoord+incX)>=0 && (yCoord+incY)<8 && (yCoord+incY)>=0 
+                && grid.grid[xCoord+incX][yCoord+incY] == playerColor){
+            return isValid;
+        }
+        
+        while((xCoord+incX*n)<8 && (xCoord+incX*n)>=0 && (yCoord+incY*n)<8 && (yCoord+incY*n)>=0 && !stopped && !found){
+            if(grid.grid[xCoord+incX*n][yCoord+incY*n] == playerColor && n > 1){
+                found = true;
+                isValid = true;
+            }
+            else if(grid.grid[xCoord+incX*n][yCoord+incY*n] == 0) {
+                stopped = true;
+            }
+            n++;
+        }
+        if(flip && found){
+            for(int i = n-1;i!=0;i--){
+                grid.grid[xCoord+incX*i][yCoord+incY*i] = playerColor;
+                if(playerColor == 1){
+                    grid.player1Score++;
+                    grid.player2Score--;
+                }
+                else {
+                    grid.player2Score++;
+                    grid.player1Score--;
+                }
+            }
+        }
+        
+        return isValid;
+    }
+    
+    
+    private boolean hasValidPlacement(OthelloGrid grid,int playerColor) {
+        int searchColor;
+        if(playerColor == 2) {
+            searchColor = 1;
+        }
+        else {
+            searchColor = 2;
+        }
+        
+        for(int y = 0;y<8;y++){
+            for(int x = 0;x<8;x++){
+                if(grid.grid[x][y] == searchColor){
+                    if(x < 7 && grid.grid[x+1][y] == 0) {
+                        if(checkLine(x+1, y, -1, -1, playerColor, grid, false)||
+                                checkLine(x+1, y, 0, -1, playerColor, grid, false)||
+                                checkLine(x+1, y, 1, -1, playerColor, grid, false)||
+                                checkLine(x+1, y, -1, 0, playerColor, grid, false)||
+                                checkLine(x+1, y, 1, 0, playerColor, grid, false)||
+                                checkLine(x+1, y, -1, 1, playerColor, grid, false)||
+                                checkLine(x+1, y, 0, 1, playerColor, grid, false)||
+                                checkLine(x+1, y, 1, 1, playerColor, grid, false)){
+                            return true;
+                        }
+                    }
+                    if(x > 0 && grid.grid[x-1][y] == 0) {
+                        if(checkLine(x-1, y, -1, -1, playerColor, grid, false)||
+                                checkLine(x-1, y, 0, -1, playerColor, grid, false)||
+                                checkLine(x-1, y, 1, -1, playerColor, grid, false)||
+                                checkLine(x-1, y, -1, 0, playerColor, grid, false)||
+                                checkLine(x-1, y, 1, 0, playerColor, grid, false)||
+                                checkLine(x-1, y, -1, 1, playerColor, grid, false)||
+                                checkLine(x-1, y, 0, 1, playerColor, grid, false)||
+                                checkLine(x-1, y, 1, 1, playerColor, grid, false)){
+                            return true;
+                        }
+                    }
+                    if(x < 7 && y<7 && grid.grid[x+1][y+1] == 0) {
+                        if(checkLine(x+1, y+1, -1, -1, playerColor, grid, false)||
+                                checkLine(x+1, y+1, 0, -1, playerColor, grid, false)||
+                                checkLine(x+1, y+1, 1, -1, playerColor, grid, false)||
+                                checkLine(x+1, y+1, -1, 0, playerColor, grid, false)||
+                                checkLine(x+1, y+1, 1, 0, playerColor, grid, false)||
+                                checkLine(x+1, y+1, -1, 1, playerColor, grid, false)||
+                                checkLine(x+1, y+1, 0, 1, playerColor, grid, false)||
+                                checkLine(x+1, y+1, 1, 1, playerColor, grid, false)){
+                            return true;
+                        }
+                    }
+                    if(x < 7 && y>0 && grid.grid[x+1][y-1] == 0) {
+                        if(checkLine(x+1, y-1, -1, -1, playerColor, grid, false)||
+                                checkLine(x+1, y-1, 0, -1, playerColor, grid, false)||
+                                checkLine(x+1, y-1, 1, -1, playerColor, grid, false)||
+                                checkLine(x+1, y-1, -1, 0, playerColor, grid, false)||
+                                checkLine(x+1, y-1, 1, 0, playerColor, grid, false)||
+                                checkLine(x+1, y-1, -1, 1, playerColor, grid, false)||
+                                checkLine(x+1, y-1, 0, 1, playerColor, grid, false)||
+                                checkLine(x+1, y-1, 1, 1, playerColor, grid, false)){
+                            return true;
+                        }
+                    }
+                    if(x > 0 && y<7 && grid.grid[x-1][y+1] == 0) {
+                        if(checkLine(x-1, y+1, -1, -1, playerColor, grid, false)||
+                                checkLine(x-1, y+1, 0, -1, playerColor, grid, false)||
+                                checkLine(x-1, y+1, 1, -1, playerColor, grid, false)||
+                                checkLine(x-1, y+1, -1, 0, playerColor, grid, false)||
+                                checkLine(x-1, y+1, 1, 0, playerColor, grid, false)||
+                                checkLine(x-1, y+1, -1, 1, playerColor, grid, false)||
+                                checkLine(x-1, y+1, 0, 1, playerColor, grid, false)||
+                                checkLine(x-1, y+1, 1, 1, playerColor, grid, false)){
+                            return true;
+                        }
+                    }
+                    if(x > 0 && y>0 && grid.grid[x-1][y-1] == 0) {
+                        if(checkLine(x-1, y, -1, -1, playerColor, grid, false)||
+                                checkLine(x-1, y-1, 0, -1, playerColor, grid, false)||
+                                checkLine(x-1, y-1, 1, -1, playerColor, grid, false)||
+                                checkLine(x-1, y-1, -1, 0, playerColor, grid, false)||
+                                checkLine(x-1, y-1, 1, 0, playerColor, grid, false)||
+                                checkLine(x-1, y-1, -1, 1, playerColor, grid, false)||
+                                checkLine(x-1, y-1, 0, 1, playerColor, grid, false)||
+                                checkLine(x-1, y-1, 1, 1, playerColor, grid, false)){
+                            return true;
+                        }
+                    }
+                    if(y<7 && grid.grid[x][y+1] == 0) {
+                        if(checkLine(x, y+1, -1, -1, playerColor, grid, false)||
+                                checkLine(x, y+1, 0, -1, playerColor, grid, false)||
+                                checkLine(x, y+1, 1, -1, playerColor, grid, false)||
+                                checkLine(x, y+1, -1, 0, playerColor, grid, false)||
+                                checkLine(x, y+1, 1, 0, playerColor, grid, false)||
+                                checkLine(x, y+1, -1, 1, playerColor, grid, false)||
+                                checkLine(x, y+1, 0, 1, playerColor, grid, false)||
+                                checkLine(x, y+1, 1, 1, playerColor, grid, false)){
+                            return true;
+                        }
+                    }
+                    if(y>0 && grid.grid[x][y-1] == 0) {
+                        if(checkLine(x, y-1, -1, -1, playerColor, grid, false)||
+                                checkLine(x, y-1, 0, -1, playerColor, grid, false)||
+                                checkLine(x, y-1, 1, -1, playerColor, grid, false)||
+                                checkLine(x, y-1, -1, 0, playerColor, grid, false)||
+                                checkLine(x, y-1, 1, 0, playerColor, grid, false)||
+                                checkLine(x, y-1, -1, 1, playerColor, grid, false)||
+                                checkLine(x, y-1, 0, 1, playerColor, grid, false)||
+                                checkLine(x, y-1, 1, 1, playerColor, grid, false)){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
     
 }
