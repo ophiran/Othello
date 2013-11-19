@@ -17,5 +17,6 @@ public class OthelloGrid implements Serializable{
     public int[][] grid = new int[8][8];
     public int player1Score;
     public int player2Score;
+    public int movNum;
     
 }

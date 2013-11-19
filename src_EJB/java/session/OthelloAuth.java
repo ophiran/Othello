@@ -118,6 +118,7 @@ public class OthelloAuth implements OthelloAuthRemote {
     public Long joinGame(String nickname, Long gameId, String password) {
         Query query = em.createNamedQuery("Games.findById").setParameter("id", gameId);
         Games game = (Games)query.getSingleResult();
+        boolean spectator = false;
         
         if(game.getPassword() == null || game.getPassword().equals(password)) {
             query = em.createNamedQuery("Players.findByNickname").setParameter("nickname", nickname);
@@ -133,8 +134,9 @@ public class OthelloAuth implements OthelloAuthRemote {
                 game.setState((Gamestate)query.getSingleResult());
             }
             else {
-                return null;
+                return game.getId();
             }
+            
             
             Connection connection;
             try {

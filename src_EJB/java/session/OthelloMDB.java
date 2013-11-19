@@ -4,7 +4,10 @@
  */
 package session;
 
+import entities.Colors;
 import entities.Games;
+import entities.Moves;
+import entities.Players;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +26,6 @@ import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -121,6 +123,8 @@ public class OthelloMDB implements MessageListener {
         grid.player1Score = 2;
         grid.player2Score = 2;
         
+        grid.movNum = 0;
+        
         othelloLoc.addGrid(gameId, grid);
     }
     
@@ -203,6 +207,19 @@ public class OthelloMDB implements MessageListener {
             if(isValid){
                 System.out.println("Putting a " + playerColor + " at position (" + xCoord +"," + yCoord + ")");
                 grid.grid[xCoord][yCoord] = playerColor;
+                grid.movNum++;
+                //To modify and add an option to save
+                /*
+                Moves move = new Moves(gameId, grid.movNum);
+                Query query = em.createNamedQuery("Players.findByNickname").setParameter("nickname", playerTurn);
+                move.setPosX(xCoord);
+                move.setPosY(yCoord);
+                move.setPlayer(((Players)query.getSingleResult()).getId());
+                query = em.createNamedQuery("Games.findById").setParameter("id", gameId);
+                move.setGames((Games)query.getSingleResult());
+                query = em.createNamedQuery("Colors.findByColorId").setParameter("id", playerColor);
+                move.setColor((Colors)query.getSingleResult());
+                */
                 if(playerTurn.equals(grid.player1) && hasValidPlacement(grid, 1)){
                     grid.playerTurn = grid.player2;
                 }

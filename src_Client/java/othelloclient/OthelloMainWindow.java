@@ -310,7 +310,7 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
             new CreateGameDiag(this, rootPaneCheckingEnabled).setVisible(true);
             if(gameId != null){
                 try {
-                    messageConsumer = session.createConsumer(topic, "GameId = " + gameId/* + "' AND Type = 'Grid'"*/);
+                    messageConsumer = session.createConsumer(topic, "GameId = " + gameId/* + " AND Type = 'Grid'"*/);
                     messageConsumer.setMessageListener(this);
                     connection.start();
                     //Show score
