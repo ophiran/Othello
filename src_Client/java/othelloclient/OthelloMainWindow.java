@@ -234,8 +234,8 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
     }
     
     private void updateScore(){
-        menuPanel.getPlayer1().setText(gameGrid.player1);
-        menuPanel.getPlayer2().setText(gameGrid.player2);
+        menuPanel.getPlayer1().setText(gameGrid.player1 + " (White)");
+        menuPanel.getPlayer2().setText(gameGrid.player2 + " (Black)");
         menuPanel.getPlayer1Score().setText(String.valueOf(gameGrid.player1Score));
         menuPanel.getPlayer2Score().setText(String.valueOf(gameGrid.player2Score));
         menuPanel.getCurrentPlayer().setText(gameGrid.playerTurn);
@@ -245,6 +245,7 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
         System.out.println("Updating grid...");
         for(int y = 0; y<8; y++){
             for(int x = 0; x<8; x++){
+                gameGrid.grid[x][y] = gridRcv.grid[x][y];
                 if(gridRcv.grid[x][y] != gameGrid.grid[x][y]){
                     gameBoard.placePiece(x, y, gridRcv.grid[x][y]);
                     repaint();
@@ -265,12 +266,23 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
         }
         
         gameGrid.player2 = gridRcv.player2;
+        gameGrid.player1Score = gridRcv.player1Score;
+        gameGrid.player2Score = gridRcv.player2Score;
+        gameGrid.winner = gridRcv.winner;
         if(gameGrid.playerTurn.equals(getNickName())){
             currentTurn = true;
         }
         else {
             currentTurn = false;
         }
+        
+        if(gameGrid.winner.equals(getNickName())){
+            gameBoard.hasWon(true);
+        }
+        else {
+            gameBoard.hasWon(false);
+        }
+        
     }
     
     @Override
@@ -315,7 +327,6 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
                     connection.start();
                     //Show score
                     menuPanel.getScorePanel().setVisible(true);
-                    Main.othelloAuth.refreshGrid(gameId);
                 } catch (JMSException ex) {
                     Logger.getLogger(OthelloMainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }

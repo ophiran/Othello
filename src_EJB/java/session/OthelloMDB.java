@@ -6,8 +6,10 @@ package session;
 
 import entities.Colors;
 import entities.Games;
+import entities.Gamestate;
 import entities.Moves;
 import entities.Players;
+import java.util.Date;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -124,7 +126,7 @@ public class OthelloMDB implements MessageListener {
         grid.player2Score = 2;
         
         grid.movNum = 0;
-        
+        grid.winner = "";
         othelloLoc.addGrid(gameId, grid);
     }
     
@@ -209,22 +211,37 @@ public class OthelloMDB implements MessageListener {
                 grid.grid[xCoord][yCoord] = playerColor;
                 grid.movNum++;
                 //To modify and add an option to save
-                /*
+                
                 Moves move = new Moves(gameId, grid.movNum);
                 Query query = em.createNamedQuery("Players.findByNickname").setParameter("nickname", playerTurn);
                 move.setPosX(xCoord);
                 move.setPosY(yCoord);
                 move.setPlayer(((Players)query.getSingleResult()).getId());
                 query = em.createNamedQuery("Games.findById").setParameter("id", gameId);
-                move.setGames((Games)query.getSingleResult());
-                query = em.createNamedQuery("Colors.findByColorId").setParameter("id", playerColor);
+                Games curGame = (Games)query.getSingleResult();
+                move.setGames(curGame);
+                query = em.createNamedQuery("Colors.findByColorId").setParameter("colorId", playerColor);
                 move.setColor((Colors)query.getSingleResult());
-                */
-                if(playerTurn.equals(grid.player1) && hasValidPlacement(grid, 1)){
+                move.setDateMove(new Date(System.currentTimeMillis()));
+                em.persist(move);
+                
+                if(playerTurn.equals(grid.player1) && hasValidPlacement(grid, 2)){
                     grid.playerTurn = grid.player2;
                 }
-                else {
+                else if(hasValidPlacement(grid, 1)){
                     grid.playerTurn = grid.player1;
+                }
+                else {
+                    if(grid.player1Score>grid.player2Score) {
+                        grid.winner = grid.player1;
+                    }
+                    else{
+                        grid.winner = grid.player2;
+                    }
+                    othelloLoc.removeGrid(gameId);
+                    query = em.createNamedQuery("Gamestate.findByName").setParameter("name", GameStatesEnum.FINISHED);
+                    curGame.setState((Gamestate)query.getSingleResult());
+                    em.persist(curGame);
                 }
             }
             sendGrid(gameId, grid);
@@ -261,15 +278,23 @@ public class OthelloMDB implements MessageListener {
         }
         if(flip && found){
             for(int i = n-1;i!=0;i--){
+                if(grid.grid[xCoord+incX*i][yCoord+incY*i] != playerColor){
+                    if(grid.playerTurn.equals(grid.player1)){
+                        grid.player1Score++;
+                    }
+                    else {
+                        grid.player2Score++;
+                    }
+                    if(grid.grid[xCoord+incX*i][yCoord+incY*i] != 0){
+                        if(grid.playerTurn.equals(grid.player1)){
+                            grid.player2Score--;
+                        }
+                        else {
+                            grid.player1Score--;
+                        }
+                    }
+                }
                 grid.grid[xCoord+incX*i][yCoord+incY*i] = playerColor;
-                if(playerColor == 1){
-                    grid.player1Score++;
-                    grid.player2Score--;
-                }
-                else {
-                    grid.player2Score++;
-                    grid.player1Score--;
-                }
             }
         }
         

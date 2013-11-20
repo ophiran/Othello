@@ -33,4 +33,10 @@ public class OthelloGameGest implements OthelloGameGestLocal {
         games.put(gameId, grid);
     }
 
+    @Override
+    public void removeGrid(Long gameId) {
+        games.remove(gameId);
+    }
+
+    
 }

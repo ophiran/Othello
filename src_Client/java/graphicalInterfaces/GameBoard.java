@@ -27,6 +27,7 @@ public class GameBoard extends javax.swing.JPanel {
     private BufferedImage blackPiece;
     private BufferedImage boardComplete;
     private BufferedImage board;
+    private BufferedImage winImage;
     
     /**
      * Creates new form GameBoard
@@ -57,8 +58,15 @@ public class GameBoard extends javax.swing.JPanel {
             board = ImageIO.read(this.getClass().getResourceAsStream("/ressources/board.jpg"));
             whitePiece = ImageIO.read(this.getClass().getResourceAsStream("/ressources/whitePiece.png"));
             blackPiece = ImageIO.read(this.getClass().getResourceAsStream("/ressources/blackPiece.png"));
+            winImage = ImageIO.read(this.getClass().getResourceAsStream("/ressources/youWin.png"));
         } catch(IOException ex){
             Logger.getLogger(GameBoard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void hasWon(boolean winner) {
+        if(winner) {
+            boardComplete = addImage(boardComplete,winImage,0,0);
         }
     }
     

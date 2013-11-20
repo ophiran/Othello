@@ -14,6 +14,8 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -36,6 +38,7 @@ import javax.persistence.Query;
 @Stateless
 @Remote(OthelloAuthRemote.class)
 //@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
+@RolesAllowed({"USERS","ADMIN"})
 public class OthelloAuth implements OthelloAuthRemote {
 
     
@@ -157,6 +160,7 @@ public class OthelloAuth implements OthelloAuthRemote {
     }
 
     @Override
+    @RolesAllowed({"ADMIN"})
     public boolean createUser(String nickname, String password) {
         System.out.println("Creating user " + nickname);
         Query query = em.createNamedQuery("Players.findByNickname").setParameter("nickname", nickname);

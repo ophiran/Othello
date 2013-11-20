@@ -15,4 +15,5 @@ public interface OthelloGameGestLocal {
 
     OthelloGrid getGrid(Long gameId);
     void addGrid(Long gameId,OthelloGrid grid);
+    void removeGrid(Long gameId);
 }
