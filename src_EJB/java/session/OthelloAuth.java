@@ -196,6 +196,7 @@ public class OthelloAuth implements OthelloAuthRemote {
             om.setObject(gameList.getGrid(gameId));
             mp.send(om);
             session.close();
+            mp.close();
         } catch (JMSException ex) {
             Logger.getLogger(OthelloAuth.class.getName()).log(Level.SEVERE, null, ex);
         }

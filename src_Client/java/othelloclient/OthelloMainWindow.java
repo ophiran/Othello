@@ -209,6 +209,7 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
                     tm.setIntProperty("X", boardPosX);
                     tm.setIntProperty("Y", boardPosY);
                     mp.send(tm);
+                    mp.close();
                 } catch (JMSException ex) {
                     Logger.getLogger(OthelloMainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -245,11 +246,11 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
         System.out.println("Updating grid...");
         for(int y = 0; y<8; y++){
             for(int x = 0; x<8; x++){
-                gameGrid.grid[x][y] = gridRcv.grid[x][y];
                 if(gridRcv.grid[x][y] != gameGrid.grid[x][y]){
                     gameBoard.placePiece(x, y, gridRcv.grid[x][y]);
                     repaint();
                 }
+                gameGrid.grid[x][y] = gridRcv.grid[x][y];
             }
         }
         gameGrid.playerTurn = gridRcv.playerTurn;

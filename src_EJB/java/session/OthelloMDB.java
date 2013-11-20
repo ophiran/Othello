@@ -162,6 +162,7 @@ public class OthelloMDB implements MessageListener {
         om.setObject(grid);
         mp.send(om);
         session.close();
+        mp.close();
     }
     
     private void playMove(Message message) throws JMSException {
@@ -225,6 +226,13 @@ public class OthelloMDB implements MessageListener {
                 move.setDateMove(new Date(System.currentTimeMillis()));
                 em.persist(move);
                 
+                if(playerTurn.equals(grid.player1)){
+                    grid.player1Score++;
+                }
+                else {
+                    grid.player2Score++;
+                }
+                
                 if(playerTurn.equals(grid.player1) && hasValidPlacement(grid, 2)){
                     grid.playerTurn = grid.player2;
                 }
@@ -279,17 +287,13 @@ public class OthelloMDB implements MessageListener {
         if(flip && found){
             for(int i = n-1;i!=0;i--){
                 if(grid.grid[xCoord+incX*i][yCoord+incY*i] != playerColor){
-                    if(grid.playerTurn.equals(grid.player1)){
-                        grid.player1Score++;
-                    }
-                    else {
-                        grid.player2Score++;
-                    }
                     if(grid.grid[xCoord+incX*i][yCoord+incY*i] != 0){
                         if(grid.playerTurn.equals(grid.player1)){
+                            grid.player1Score++;
                             grid.player2Score--;
                         }
                         else {
+                            grid.player2Score++;
                             grid.player1Score--;
                         }
                     }
