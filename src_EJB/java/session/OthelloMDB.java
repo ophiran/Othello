@@ -122,12 +122,12 @@ public class OthelloMDB implements MessageListener {
         grid.grid[4][4] = 1;
         grid.grid[4][3] = 2;
         
-        grid.player1Score = 15;
+        grid.player1Score = 2;
         grid.player2Score = 2;
         
         grid.movNum = 0;
         grid.winner = "";
-        grid.grid = debugGrid();
+        //grid.grid = debugGrid();
         othelloLoc.addGrid(gameId, grid);
     }
     
