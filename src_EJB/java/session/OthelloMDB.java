@@ -127,7 +127,63 @@ public class OthelloMDB implements MessageListener {
         
         grid.movNum = 0;
         grid.winner = "";
+        grid.grid = debugGrid();
         othelloLoc.addGrid(gameId, grid);
+    }
+    
+    private int[][] debugGrid() {
+        int [][] grid = new int[8][8];
+        grid[1][0] = 1;
+        grid[1][1] = 1;
+        grid[1][2] = 1;
+        grid[1][3] = 1;
+        grid[1][4] = 1;
+        grid[1][5] = 1;
+        grid[1][6] = 1;
+        grid[1][7] = 1;
+        grid[2][0] = 1;
+        grid[2][1] = 1;
+        grid[2][2] = 1;
+        grid[2][3] = 1;
+        grid[2][4] = 1;
+        grid[2][5] = 2;
+        grid[2][6] = 1;
+        grid[2][7] = 1;
+        grid[3][0] = 1;
+        grid[3][1] = 1;
+        grid[3][2] = 1;
+        grid[3][3] = 2;
+        grid[3][4] = 1;
+        grid[3][5] = 1;
+        grid[3][6] = 2;
+        grid[3][7] = 2;
+        grid[4][0] = 1;
+        grid[4][1] = 1;
+        grid[4][2] = 1;
+        grid[4][3] = 2;
+        grid[4][4] = 1;
+        grid[4][5] = 1;
+        grid[4][6] = 1;
+        grid[4][7] = 1;
+        grid[5][0] = 2;
+        grid[5][1] = 2;
+        grid[5][2] = 2;
+        grid[5][3] = 2;
+        grid[5][4] = 1;
+        grid[5][5] = 1;
+        grid[5][6] = 1;
+        grid[5][7] = 1;
+        grid[6][0] = 1;
+        grid[6][1] = 1;
+        grid[6][2] = 1;
+        grid[6][3] = 1;
+        grid[6][4] = 1;
+        grid[6][5] = 1;
+        grid[6][6] = 2;
+        grid[6][7] = 1;
+        
+        
+        return grid;
     }
     
     private void joinGame(Message message) throws JMSException{
@@ -170,7 +226,10 @@ public class OthelloMDB implements MessageListener {
         String playerTurn = message.getStringProperty("Player");
         int xCoord = message.getIntProperty("X");
         int yCoord = message.getIntProperty("Y");
+        
         OthelloGrid grid = othelloLoc.getGrid(gameId);
+        if(grid == null) return;
+        
         boolean isValid = false; //verify if the placement was valid
         int playerColor;
         
@@ -242,9 +301,11 @@ public class OthelloMDB implements MessageListener {
                 else {
                     if(grid.player1Score>grid.player2Score) {
                         grid.winner = grid.player1;
+                        System.out.println(grid.player1 + " is the winner of gameId " + gameId);
                     }
                     else{
                         grid.winner = grid.player2;
+                        System.out.println(grid.player2 + " is the winner of gameId " + gameId);
                     }
                     othelloLoc.removeGrid(gameId);
                     query = em.createNamedQuery("Gamestate.findByName").setParameter("name", GameStatesEnum.FINISHED);
@@ -252,6 +313,7 @@ public class OthelloMDB implements MessageListener {
                     em.persist(curGame);
                 }
             }
+            System.out.println("Grid value " + grid);
             sendGrid(gameId, grid);
         }
         

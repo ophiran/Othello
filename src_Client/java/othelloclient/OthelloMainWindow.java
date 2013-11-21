@@ -277,10 +277,13 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
             currentTurn = false;
         }
         
-        if(gameGrid.winner.equals(getNickName())){
+        if(currentStatus == GameStat.PLAYER1 && gameGrid.winner.equals(gameGrid.player1) || 
+                currentStatus == GameStat.PLAYER2 && gameGrid.winner.equals(gameGrid.player2)){
+            System.out.println("You have won!!");
             gameBoard.hasWon(true);
         }
-        else {
+        else if(!gameGrid.winner.isEmpty() && (currentStatus == GameStat.PLAYER1 || currentStatus == GameStat.PLAYER2)) {
+            System.out.println("You have lost :(");
             gameBoard.hasWon(false);
         }
         
