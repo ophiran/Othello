@@ -293,14 +293,10 @@ public class OthelloMDB implements MessageListener {
                     grid.player2Score++;
                 }
                 System.out.println("CHECK");
-                showGridServ(grid);
-                if(playerTurn.equals(grid.player1) && hasValidPlacement(grid, 2)){
-                    grid.playerTurn = grid.player2;
-                }
-                else if(hasValidPlacement(grid, 1)){
-                    grid.playerTurn = grid.player1;
-                }
-                else {
+                
+                boolean canPlay1 = hasValidPlacement(grid, 1);
+                boolean canPlay2 = hasValidPlacement(grid, 2);
+                if(!canPlay1 && !canPlay2) {
                     if(grid.player1Score>grid.player2Score) {
                         grid.winner = grid.player1;
                         System.out.println(grid.player1 + " is the winner of gameId " + gameId);
@@ -310,9 +306,18 @@ public class OthelloMDB implements MessageListener {
                         System.out.println(grid.player2 + " is the winner of gameId " + gameId);
                     }
                     othelloLoc.removeGrid(gameId);
-                    query = em.createNamedQuery("Gamestate.findByName").setParameter("name", GameStatesEnum.FINISHED);
+                    query = em.createNamedQuery("Gamestate.findByName").setParameter("name", GameStatesEnum.FINISHED.getName());
                     curGame.setState((Gamestate)query.getSingleResult());
                     em.persist(curGame);
+                }
+                else {
+                    showGridServ(grid);
+                    if(playerTurn.equals(grid.player1) && canPlay2){
+                        grid.playerTurn = grid.player2;
+                    }
+                    else if(canPlay1){
+                        grid.playerTurn = grid.player1;
+                    }
                 }
             }
             System.out.println("Grid value " + grid);
@@ -322,11 +327,13 @@ public class OthelloMDB implements MessageListener {
     }
     
     private void showGridServ(OthelloGrid grid) {
+        String str = "";
         for(int y = 0;y<8;y++) {
-            for(int x = 0;x<8;x++) {
-                System.out.print(grid.grid[x][y]);
+            for(int x = 0;x<8;x++){
+                str += grid.grid[x][y];
             }
-            System.out.println();
+            System.out.println(str);
+            str = "";
         }
     }
     
