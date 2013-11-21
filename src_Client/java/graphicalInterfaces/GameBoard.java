@@ -66,7 +66,10 @@ public class GameBoard extends javax.swing.JPanel {
     
     public void hasWon(boolean winner) {
         if(winner) {
-            boardComplete = addImage(boardComplete,winImage,0,0);
+            Graphics2D g2d = (Graphics2D)boardComplete.getGraphics();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+            g2d.drawImage(winImage, 1, 1, null);
         }
     }
     
