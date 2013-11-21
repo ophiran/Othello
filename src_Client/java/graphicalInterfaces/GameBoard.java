@@ -28,6 +28,7 @@ public class GameBoard extends javax.swing.JPanel {
     private BufferedImage boardComplete;
     private BufferedImage board;
     private BufferedImage winImage;
+    private BufferedImage loseImage;
     
     /**
      * Creates new form GameBoard
@@ -59,17 +60,21 @@ public class GameBoard extends javax.swing.JPanel {
             whitePiece = ImageIO.read(this.getClass().getResourceAsStream("/ressources/whitePiece.png"));
             blackPiece = ImageIO.read(this.getClass().getResourceAsStream("/ressources/blackPiece.png"));
             winImage = ImageIO.read(this.getClass().getResourceAsStream("/ressources/youWin.png"));
+            winImage = ImageIO.read(this.getClass().getResourceAsStream("/ressources/youLose.png"));
         } catch(IOException ex){
             Logger.getLogger(GameBoard.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void hasWon(boolean winner) {
+        Graphics2D g2d = (Graphics2D)boardComplete.getGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         if(winner) {
-            Graphics2D g2d = (Graphics2D)boardComplete.getGraphics();
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
             g2d.drawImage(winImage, 1, 1, null);
+        }
+        else {
+            g2d.drawImage(loseImage, 1, 1, null);
         }
     }
     

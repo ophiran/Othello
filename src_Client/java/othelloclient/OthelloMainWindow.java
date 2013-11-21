@@ -187,6 +187,8 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
                 boardClicked(e);
             }
         });
+        
+        chatPanel.getChatField().addActionListener(this);
     }
     
     public String getNickName(){
@@ -229,6 +231,13 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
                 updateGrid(gameGridRcv);
                 updateScore();
             }
+            else if(type.equals("Chat")) {
+                System.out.println(message.getStringProperty("Text"));
+                chatPanel.getChatWindow().append(message.getStringProperty("Name") + " : ");
+                chatPanel.getChatWindow().append(message.getStringProperty("Text"));
+                chatPanel.getChatWindow().append(System.getProperty("line.separator"));
+            }
+            
         } catch (JMSException ex) {
             Logger.getLogger(OthelloMainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -298,6 +307,13 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
                 menuPanel.getNickNameField().setText(userPanel.getUsername());
                 this.currentStatus = GameStat.CONNECTED;
                 switchMenuPanel();
+                try {
+                    messageConsumer = session.createConsumer(topic,"Type = 'Chat'");
+                    messageConsumer.setMessageListener(this);
+                    connection.start();
+                } catch (JMSException ex) {
+                    Logger.getLogger(OthelloMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             else {
                 //show error to the user
@@ -310,6 +326,13 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
                 menuPanel.getNickNameField().setText(userPanel.getUsername());
                 this.currentStatus = GameStat.CONNECTED;
                 switchMenuPanel();
+                try {
+                    messageConsumer = session.createConsumer(topic,"Type = 'Chat'");
+                    messageConsumer.setMessageListener(this);
+                    connection.start();
+                } catch (JMSException ex) {
+                    Logger.getLogger(OthelloMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             else {
                 //show error to the user
@@ -326,9 +349,9 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
             new CreateGameDiag(this, rootPaneCheckingEnabled).setVisible(true);
             if(gameId != null){
                 try {
-                    messageConsumer = session.createConsumer(topic, "GameId = " + gameId/* + " AND Type = 'Grid'"*/);
+                    messageConsumer = session.createConsumer(topic, "GameId = " + gameId + " OR Type = 'Chat'");
                     messageConsumer.setMessageListener(this);
-                    connection.start();
+                    //connection.start();
                     //Show score
                     menuPanel.getScorePanel().setVisible(true);
                 } catch (JMSException ex) {
@@ -343,9 +366,9 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
                 gameId = Main.othelloAuth.joinGame(menuPanel.getNickNameField().getText(), info.gameId, gamePassword);
                 if(gameId != null){
                     try {
-                        messageConsumer = session.createConsumer(topic, "GameId = " + gameId/* + "' AND Type = 'Grid'"*/);
+                        messageConsumer = session.createConsumer(topic, "GameId = " + gameId + " OR Type = 'Chat'");
                         messageConsumer.setMessageListener(this);
-                        connection.start();
+                        //connection.start();
                         //Show score
                         menuPanel.getScorePanel().setVisible(true);
                         Main.othelloAuth.refreshGrid(gameId);
@@ -355,6 +378,21 @@ public class OthelloMainWindow extends javax.swing.JFrame implements ActionListe
                 }
                 System.out.println("Game Id Client : " + gameId);
             }
+        }
+        if(e.getSource().equals(chatPanel.getChatField()) && currentStatus != GameStat.NOTCONNECTED){
+            try {
+                MessageProducer mp = session.createProducer(topic);
+                TextMessage tm = session.createTextMessage();
+                tm.setStringProperty("Name", menuPanel.getNickNameField().getText());
+                tm.setStringProperty("Type", "Chat");
+                tm.setStringProperty("Text", chatPanel.getChatField().getText());
+                mp.send(tm);
+                mp.close();
+                chatPanel.getChatField().setText("");
+            } catch (JMSException ex) {
+                Logger.getLogger(OthelloMainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
         }
     }
     

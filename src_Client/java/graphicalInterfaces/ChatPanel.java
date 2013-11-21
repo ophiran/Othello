@@ -4,6 +4,9 @@
  */
 package graphicalInterfaces;
 
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 /**
  *
  * @author Ophiran
@@ -15,8 +18,16 @@ public class ChatPanel extends javax.swing.JPanel {
      */
     public ChatPanel() {
         initComponents();
+        jTextArea1.setEditable(false);
     }
 
+    public JTextArea getChatWindow() {
+        return jTextArea1;
+    }
+    
+    public JTextField getChatField() {
+        return jTextField1;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,7 +46,6 @@ public class ChatPanel extends javax.swing.JPanel {
         jScrollPane1.setViewportView(jTextArea1);
 
         jTextField1.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
-        jTextField1.setText("jTextField1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
