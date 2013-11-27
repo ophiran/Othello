@@ -60,7 +60,7 @@ public class GameBoard extends javax.swing.JPanel {
             whitePiece = ImageIO.read(this.getClass().getResourceAsStream("/ressources/whitePiece.png"));
             blackPiece = ImageIO.read(this.getClass().getResourceAsStream("/ressources/blackPiece.png"));
             winImage = ImageIO.read(this.getClass().getResourceAsStream("/ressources/youWin.png"));
-            winImage = ImageIO.read(this.getClass().getResourceAsStream("/ressources/youLose.png"));
+            loseImage = ImageIO.read(this.getClass().getResourceAsStream("/ressources/youLose.png"));
         } catch(IOException ex){
             Logger.getLogger(GameBoard.class.getName()).log(Level.SEVERE, null, ex);
         }
