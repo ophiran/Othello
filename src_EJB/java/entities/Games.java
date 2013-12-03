@@ -45,7 +45,8 @@ import session.GameListInfo;
     @NamedQuery(name = "Games.findByEndDate", query = "SELECT g FROM Games g WHERE g.endDate = :endDate"),
     @NamedQuery(name = "Games.findByPassword", query = "SELECT g FROM Games g WHERE g.password = :password"),
     @NamedQuery(name = "Games.findByState", query = "SELECT g FROM Games g WHERE g.state = :state"),
-    @NamedQuery(name = "Games.findByUnique", query = "SELECT g FROM Games g WHERE g.gameName = :gameName AND g.startDate = :startDate")})
+    @NamedQuery(name = "Games.findByUnique", query = "SELECT g FROM Games g WHERE g.gameName = :gameName AND g.startDate = :startDate"),
+    @NamedQuery(name = "Games.findWithPlayer",query = "SELECT g FROM Games g WHERE g.player1 = :player OR g.player2 = :player")})
 public class Games implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

@@ -7,7 +7,6 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,16 +15,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author ophiran
+ * @author Ophiran
  */
 @Entity
 @Table(name = "players")
@@ -35,6 +32,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Players.findById", query = "SELECT p FROM Players p WHERE p.id = :id"),
     @NamedQuery(name = "Players.findByNickname", query = "SELECT p FROM Players p WHERE p.nickname = :nickname"),
     @NamedQuery(name = "Players.findByPassword", query = "SELECT p FROM Players p WHERE p.password = :password"),
+    @NamedQuery(name = "Players.findByWins", query = "SELECT p FROM Players p WHERE p.wins = :wins"),
+    @NamedQuery(name = "Players.findByLost", query = "SELECT p FROM Players p WHERE p.lost = :lost"),
     @NamedQuery(name = "Players.findByAuthentication", query = "SELECT p FROM Players p WHERE p.nickname = :nickname AND p.password = :password")})
 public class Players implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -51,10 +50,10 @@ public class Players implements Serializable {
     @Size(max = 40)
     @Column(name = "password")
     private String password;
-    @OneToMany(mappedBy = "player2")
-    private Collection<Games> gamesCollection;
-    @OneToMany(mappedBy = "player1")
-    private Collection<Games> gamesCollection1;
+    @Column(name = "wins")
+    private Integer wins;
+    @Column(name = "lost")
+    private Integer lost;
 
     public Players() {
     }
@@ -92,22 +91,20 @@ public class Players implements Serializable {
         this.password = password;
     }
 
-    @XmlTransient
-    public Collection<Games> getGamesCollection() {
-        return gamesCollection;
+    public Integer getWins() {
+        return wins;
     }
 
-    public void setGamesCollection(Collection<Games> gamesCollection) {
-        this.gamesCollection = gamesCollection;
+    public void setWins(Integer wins) {
+        this.wins = wins;
     }
 
-    @XmlTransient
-    public Collection<Games> getGamesCollection1() {
-        return gamesCollection1;
+    public Integer getLost() {
+        return lost;
     }
 
-    public void setGamesCollection1(Collection<Games> gamesCollection1) {
-        this.gamesCollection1 = gamesCollection1;
+    public void setLost(Integer lost) {
+        this.lost = lost;
     }
 
     @Override
