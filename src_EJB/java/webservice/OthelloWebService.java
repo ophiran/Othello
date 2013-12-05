@@ -13,6 +13,7 @@ import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
+import javax.jws.HandlerChain;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -22,6 +23,7 @@ import javax.persistence.Query;
  * @author Ophiran
  */
 @WebService(serviceName = "OthelloWebService")
+@HandlerChain(file = "handlerChain.xml")
 @Stateless()
 public class OthelloWebService {
 
