@@ -38,7 +38,7 @@ public class OthelloWebService {
     }
     
     @WebMethod(operationName = "infoPlayer")
-    public PlayerProfile getInfoPlayer(@WebParam(name = "username") String username) {
+    public PlayerProfile getInfoPlayer(@WebParam(name = "username",header = true,mode = WebParam.Mode.IN) String username) {
         
         Query query = em.createNamedQuery("Players.findByNickname").setParameter("nickname", username);
         Players player = (Players)query.getSingleResult();
@@ -51,6 +51,7 @@ public class OthelloWebService {
             gInfo = gInfo.replaceAll(" ", "&nbsp;");
             profile.gameList.add(gInfo);
         }
+        System.out.println("Players win " + player.getWins());
         profile.wins = player.getWins();
         profile.loss = player.getLost();
         profile.username = player.getNickname();

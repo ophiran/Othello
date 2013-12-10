@@ -168,6 +168,8 @@ public class OthelloAuth implements OthelloAuthRemote {
             Players player = new Players();
             player.setNickname(nickname);
             player.setPassword(password);
+            player.setWins(0);
+            player.setLost(0);
             em.persist(player);
             return true;
         }
