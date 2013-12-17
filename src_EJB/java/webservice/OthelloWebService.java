@@ -14,9 +14,12 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import javax.jws.HandlerChain;
+import javax.jws.WebResult;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.ResponseWrapper;
 
 /**
  *
@@ -29,6 +32,7 @@ public class OthelloWebService {
 
     @PersistenceContext(unitName = "OthelloEAR-ejbPU")
     private EntityManager em;
+    
     /**
      * This is a sample web service operation
      */
@@ -38,6 +42,7 @@ public class OthelloWebService {
     }
     
     @WebMethod(operationName = "infoPlayer")
+    @RequestWrapper(className = "java.lang.String")
     public PlayerProfile getInfoPlayer(@WebParam(name = "username",header = true,mode = WebParam.Mode.IN) String username) {
         
         Query query = em.createNamedQuery("Players.findByNickname").setParameter("nickname", username);
