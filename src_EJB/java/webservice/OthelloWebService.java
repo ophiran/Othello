@@ -42,8 +42,7 @@ public class OthelloWebService {
     }
     
     @WebMethod(operationName = "infoPlayer")
-    @RequestWrapper(className = "java.lang.String")
-    public PlayerProfile getInfoPlayer(@WebParam(name = "username",header = true,mode = WebParam.Mode.IN) String username) {
+    public PlayerProfile getInfoPlayer(@WebParam(name = "username") String username) {
         
         Query query = em.createNamedQuery("Players.findByNickname").setParameter("nickname", username);
         Players player = (Players)query.getSingleResult();

@@ -5,6 +5,7 @@
 package webservice;
 
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.Set;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
@@ -26,7 +27,13 @@ public class handler implements SOAPHandler<SOAPMessageContext>{
     @Override
     public boolean handleMessage(SOAPMessageContext context) {
         //if(context.getMessage().)
-        Logger.getGlobal().info(context.getMessage().toString());
+        boolean outbound = (boolean)context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        if(outbound){
+            Logger.getGlobal().info("Outbound: "+ GregorianCalendar.getInstance() + " " + context.getMessage().toString());
+        }
+        else {
+            Logger.getGlobal().info("Inbound: "+ GregorianCalendar.getInstance() + " " + context.getMessage().toString());
+        }
         return true;
     }
 
